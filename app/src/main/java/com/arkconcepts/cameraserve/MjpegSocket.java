@@ -6,6 +6,7 @@ import java.net.Socket;
 public class MjpegSocket implements Runnable {
     private Socket socket;
     private String boundary = "CameraServeDataBoundary";
+    private final int FPS = 30;
 
     public MjpegSocket(Socket socket) {
         this.socket = socket;
@@ -31,6 +32,7 @@ public class MjpegSocket implements Runnable {
             stream.flush();
 
             while(true) {
+                long start = System.currentTimeMillis();
                 byte[] frame = MainActivity.getJpegFrame();
 
                 stream.write(("Content-type: image/jpeg\r\n" +
@@ -38,6 +40,9 @@ public class MjpegSocket implements Runnable {
                         "\r\n").getBytes());
                 stream.write(frame);
                 stream.write(("\r\n--" + boundary + "\r\n").getBytes());
+                while (System.currentTimeMillis() - start < 1000 * (1.0 / FPS)) {
+                    Thread.sleep(1);
+                }
             }
 
         } catch (Exception e) {

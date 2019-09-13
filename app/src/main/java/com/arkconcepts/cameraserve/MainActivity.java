@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
     private ByteArrayOutputStream previewStream = new ByteArrayOutputStream();
     private int rotationSteps = 0;
     private boolean aboveLockScreen = true;
+    private int quality = 100;
 
     private static SsdpAdvertiser ssdpAdvertiser = new SsdpAdvertiser();
     private static Thread ssdpThread = new Thread(ssdpAdvertiser);
@@ -161,6 +162,8 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
         aboveLockScreen = preferences.getBoolean("above_lock_screen", aboveLockScreen);
         Boolean allIps = preferences.getBoolean("allow_all_ips", false);
         MjpegServer.setAllIpsAllowed(allIps);
+        Integer quality = Integer.parseInt(preferences.getString("quality", "100"));
+        this.quality = quality;
     }
 
     private void startPreview() {
@@ -258,7 +261,7 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
         int format = p.getPreviewFormat();
         new YuvImage(bytes, format, previewWidth, previewHeight, null)
                 .compressToJpeg(new Rect(0, 0, previewWidth, previewHeight),
-                        100, previewStream);
+                        this.quality, previewStream);
 
         setJpegFrame(previewStream);
     }

@@ -43,6 +43,13 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
             portPref.setText("8080");
             sharedPreferences.edit().putString("port", "8080").apply();
         }
+        EditTextPreference qualPref = (EditTextPreference) findPreference("quality");
+        try {
+            Integer.parseInt(qualPref.getText());
+        } catch (NumberFormatException nfe) {
+            qualPref.setText("100");
+            sharedPreferences.edit().putString("quality", "100").apply();
+        }
 
         populateResolutions();
         updateSummaries();
@@ -135,6 +142,9 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
         EditTextPreference portPref = (EditTextPreference) findPreference("port");
         portPref.setSummary(portPref.getText() + " (on " + getIp() + ")");
 
+        EditTextPreference qualPref = (EditTextPreference) findPreference("quality");
+        qualPref.setSummary(qualPref.getText());
+
         ListPreference camPref = (ListPreference) findPreference("cam");
         camPref.setSummary("Cam " + (Integer.parseInt(camPref.getValue()) + 1));
 
@@ -152,7 +162,7 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
     }
 
     private String getIp() {
-        WifiManager wifiMgr = (WifiManager) getSystemService(WIFI_SERVICE);
+        WifiManager wifiMgr = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
         return Formatter.formatIpAddress(wifiMgr.getConnectionInfo().getIpAddress());
     }
 }
